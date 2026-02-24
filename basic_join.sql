@@ -114,3 +114,75 @@ ORDER BY
     wp.age DESC
 ;
 go
+
+------------------------------------------------------------------------------------------------------------------
+--Challenges
+
+SET NOCOUNT ON;
+
+SELECT 
+    h.hacker_id,
+    h.name,
+    COUNT(ch.challenge_id)
+FROM hackers as h
+JOIN challenges as ch ON ch.hacker_id = h.hacker_id
+GROUP BY
+    h.hacker_id,
+    h.name
+HAVING
+    COUNT(ch.challenge_id) = 
+        (select TOP 1 COUNT(challenge_id)
+            FROM challenges
+            GROUP BY 
+                hacker_id
+            ORDER BY COUNT(challenge_id) DESC
+        )
+    OR COUNT(ch.challenge_id) IN
+        (
+            SELECT n_challenges2
+            FROM(
+                SELECT COUNT(challenge_id) as n_challenges2
+                FROM challenges
+                GROUP BY hacker_id) as chall_tab
+            GROUP BY n_challenges2
+            HAVING COUNT(n_challenges2) = 1
+        )
+ORDER BY 
+    COUNT(ch.challenge_id) DESC,
+    h.hacker_id
+
+;
+go
+
+------------------------------------------------------------------------------------------------------------------
+--Contest Leaderboard
+SET NOCOUNT ON;
+
+
+
+SELECT 
+    h.hacker_id,
+    h.name,
+    SUM(s.score)
+FROM hackers as h
+JOIN 
+    (SELECT hacker_id, challenge_id, MAX(score) as score
+    FROM submissions
+    GROUP BY
+        hacker_id, challenge_id)
+    as s ON h.hacker_id = s.hacker_id
+GROUP BY     
+    h.hacker_id,
+    h.name
+HAVING
+    SUM(s.score) > 0
+ORDER BY
+    SUM(s.score) DESC,
+    h.hacker_id ASC
+;
+
+
+
+
+
+go
