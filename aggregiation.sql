@@ -158,3 +158,38 @@ WHERE lat_n > 38.7780
 order by lat_n ASC
 
 go
+
+------------------------------------------------------------------------------------------------------------------
+--Weather Observation Station 18
+SET NOCOUNT ON;
+
+SELECT
+    CAST(ABS(MAX(lat_n) - MIN(lat_n))+ABS(MAX(long_w)-MIN(long_w)) AS DECIMAL(10,4))    
+FROM station
+
+;
+
+go
+
+------------------------------------------------------------------------------------------------------------------
+--Weather Observation Station 19
+SET NOCOUNT ON;
+
+SELECT
+    CAST(SQRT(POWER(MAX(lat_n)-MIN(lat_n),2) + POWER(MAX(long_w)-MIN(long_w),2)) AS DECIMAL(10,4))
+FROM station
+;
+go
+------------------------------------------------------------------------------------------------------------------
+--Weather Observation Station 20
+SET NOCOUNT ON;
+
+SELECT DISTINCT
+    CAST((PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY lat_n) OVER()) AS DECIMAL(10,4))
+FROM station
+;
+go
+------------------------------------------------------------------------------------------------------------------
+--Weather Observation Station 
+------------------------------------------------------------------------------------------------------------------
+--Weather Observation Station 
